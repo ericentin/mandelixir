@@ -35,11 +35,15 @@ defmodule Mandelixir.Scene.Home do
 
     render_mandelbrot(state)
 
+    opencl_device_info = Mandelixir.OpenCL.get_device_info()
+
     graph =
       Graph.build(font: :roboto, font_size: @text_size)
       |> add_specs_to_graph([
         rect_spec({width, height}, fill: {:dynamic, "mandelbrot"}),
-        text_spec(@note, translate: {7, @text_size})
+        text_spec("OpenCL Device Name: #{opencl_device_info[:name]}\n" <> @note,
+          translate: {7, @text_size}
+        )
       ])
 
     {:ok, put_in(state[:graph], graph), push: graph}

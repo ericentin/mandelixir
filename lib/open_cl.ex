@@ -6,6 +6,7 @@ defmodule Mandelixir.OpenCL do
   def init do
     {:ok, [platform | _]} = :cl.get_platform_ids()
     {:ok, [device | _]} = :cl.get_device_ids(platform, :gpu)
+    {:ok, device_info} = :cl.get_device_info(device)
     {:ok, context} = :cl.create_context([device])
     {:ok, queue} = :cl.create_queue(context, device, [])
     {:ok, program} = :cl.create_program_with_source(context, @kernel)
@@ -14,6 +15,11 @@ defmodule Mandelixir.OpenCL do
     :persistent_term.put(__MODULE__.Context, context)
     :persistent_term.put(__MODULE__.Queue, queue)
     :persistent_term.put(__MODULE__.Kernel, kernel)
+    :persistent_term.put(__MODULE__.DeviceInfo, device_info)
+  end
+
+  def get_device_info do
+    :persistent_term.get(__MODULE__.DeviceInfo)
   end
 
   def ensure_output_buffer(width, height) do
